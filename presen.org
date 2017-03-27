@@ -8,6 +8,11 @@
 #+LINK: sjpg file:img/static/%s.jpg
 
 #+BEGIN_outline-text-1
+#+BEGIN_CENTER
+浅井 政太郎
+
+東京大学大学院 総合文化研究科 福永研究室 D2
+#+END_CENTER
 #+END_outline-text-1
 
 * 注意
@@ -481,3 +486,9 @@ CL-CUDD をまともに使える状態にした
 ZDDでお姉さん問題を解くソルバを作った
 
 プランニングに応用したい
+
+#+BEGIN_CENTER
+*/福永研はAIやりたい新規学生募集中! metahack.org/*
+
+*/Lisper歓迎, 教授もlisper/*
+#+END_CENTER

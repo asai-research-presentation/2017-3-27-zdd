@@ -1,4 +1,4 @@
-This is e-pTeX, Version 3.14159265-p3.6-141210-2.6 (utf8.euc) (TeX Live 2015/Debian) (preloaded format=platex 2016.7.26)  27 MAR 2017 14:56
+This is e-pTeX, Version 3.14159265-p3.6-141210-2.6 (utf8.euc) (TeX Live 2015/Debian) (preloaded format=platex 2016.7.26)  27 MAR 2017 15:01
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -682,78 +682,77 @@ LaTeX Info: Redefining \nameref on input line 21.
  ABD: EveryShipout initializing macros
 (./presen.org.tex
 LaTeX Font Info:    Font shape `JT1/mc/bx/n' in size <17.28> not available
-(Font)              Font shape `JT1/gt/m/n' tried instead on input line 4.
+(Font)              Font shape `JT1/gt/m/n' tried instead on input line 9.
 LaTeX Font Info:    Font shape `JY1/mc/bx/n' in size <17.28> not available
-(Font)              Font shape `JY1/gt/m/n' tried instead on input line 4.
+(Font)              Font shape `JY1/gt/m/n' tried instead on input line 9.
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <17.28> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 4.
-LaTeX Font Info:    Try loading font information for OMS+ptm on input line 10.
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 9.
+LaTeX Font Info:    Try loading font information for OMS+ptm on input line 15.
  (/usr/share/texlive/texmf-dist/tex/latex/psnfss/omsptm.fd
 File: omsptm.fd 
 )
 LaTeX Font Info:    Font shape `OMS/ptm/m/n' in size <12> not available
-(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 10.
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 15.
 
 
 LaTeX Font Warning: Font shape `JT1/mc/m/sc' undefined
-(Font)              using `JT1/mc/m/n' instead on input line 18.
+(Font)              using `JT1/mc/m/n' instead on input line 23.
 
 
 LaTeX Font Warning: Font shape `JY1/mc/m/sc' undefined
-(Font)              using `JY1/mc/m/n' instead on input line 18.
+(Font)              using `JY1/mc/m/n' instead on input line 23.
 
 File: img/static/latest-tech.png Graphic file (type bmp)
-<img/static/latest-tech.png>
+<img/static/latest-tech.png> [1
+
+]
 File: img/static/dd.png Graphic file (type bmp)
  <img/static/dd.png>
-LaTeX Font Info:    Try loading font information for U+msa on input line 54.
+LaTeX Font Info:    Try loading font information for U+msa on input line 59.
 
 (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Try loading font information for U+msb on input line 54.
+LaTeX Font Info:    Try loading font information for U+msb on input line 59.
 
 (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 )
 LaTeX Font Info:    Font shape `JT1/mc/bx/n' in size <12> not available
-(Font)              Font shape `JT1/gt/m/n' tried instead on input line 54.
+(Font)              Font shape `JT1/gt/m/n' tried instead on input line 59.
 LaTeX Font Info:    Font shape `JY1/mc/bx/n' in size <12> not available
-(Font)              Font shape `JY1/gt/m/n' tried instead on input line 54.
+(Font)              Font shape `JY1/gt/m/n' tried instead on input line 59.
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <12> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 54.
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 59.
 
-Underfull \hbox (badness 1960) in paragraph at lines 54--54
+Underfull \hbox (badness 1960) in paragraph at lines 59--59
 []$\OML/cmm/m/it/12 f \OT1/cmr/m/n/12 : \OML/cmm/m/it/12 B[] \OMS/cmsy/m/n/12 !
  \OML/cmm/m/it/12 B$ \OT1/ptm/m/n/12 :
  []
 
-[1
-
-]
 LaTeX Font Info:    Font shape `JT1/mc/bx/n' in size <14.4> not available
-(Font)              Font shape `JT1/gt/m/n' tried instead on input line 56.
+(Font)              Font shape `JT1/gt/m/n' tried instead on input line 61.
 LaTeX Font Info:    Font shape `JY1/mc/bx/n' in size <14.4> not available
-(Font)              Font shape `JY1/gt/m/n' tried instead on input line 56.
+(Font)              Font shape `JY1/gt/m/n' tried instead on input line 61.
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <14.4> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 56.
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 61.
 File: img/static/dd-xor.png Graphic file (type bmp)
- <img/static/dd-xor.png>
+<img/static/dd-xor.png> [2]
 File: img/dd-tree.png Graphic file (type bmp)
  <img/dd-tree.png>
 File: img/dd-tree2.png Graphic file (type bmp)
- <img/dd-tree2.png> [2]
+ <img/dd-tree2.png>
 File: img/static/dd-dd.png Graphic file (type bmp)
 
 <img/static/dd-dd.png> (I search kanjifont definition file: . . )
 (I search font definition file: . . . . . . . . )
-LaTeX Font Info:    Try loading font information for OT1+pcr on input line 187.
+LaTeX Font Info:    Try loading font information for OT1+pcr on input line 192.
 
 
 (/usr/share/texlive/texmf-dist/tex/latex/psnfss/ot1pcr.fd
 File: ot1pcr.fd 2001/06/04 font definitions for OT1/pcr.
-)
-Underfull \hbox (badness 10000) in paragraph at lines 219--219
+) [3]
+Underfull \hbox (badness 10000) in paragraph at lines 224--224
 []\OT1/ptm/m/n/12 ADD: $\OMS/cmsy/m/n/12 ^^@\OML/cmm/m/it/12 f; f \OMS/cmsy/m/n
 /12 ^^H \OML/cmm/m/it/12 g; f \OMS/cmsy/m/n/12 
 
@@ -762,55 +761,77 @@ Underfull \hbox (badness 10000) in paragraph at lines 219--219
 File: img/static/dd-operation.png Graphic file (type bmp)
 <img/static/dd-operation.png>
 File: img/bdd-reduction.png Graphic file (type bmp)
- <img/bdd-reduction.png> [3]
+ <img/bdd-reduction.png>
 File: img/static/circuit.png Graphic file (type bmp)
-
-<img/static/circuit.png> [4]
+ <img/static/circuit.png>
+[4]
 File: img/static/bdd-zdd.png Graphic file (type bmp)
  <img/static/bdd-zdd.png>
 File: img/static/reduction-rule-bdd.png Graphic file (type bmp)
-
-<img/static/reduction-rule-bdd.png>
+ <img/static/reduction-rule-bdd.png>
 File: img/static/reduction-rule-zdd.png Graphic file (type bmp)
- <img/static/reduction-rule-zdd.png>
-File: img/static/bdd-zdd2.png Graphic file (type bmp)
 
-<img/static/bdd-zdd2.png> [5]
+<img/static/reduction-rule-zdd.png> [5]
+File: img/static/bdd-zdd2.png Graphic file (type bmp)
+ <img/static/bdd-zdd2.png>
 File: img/static/graph.png Graphic file (type bmp)
- <img/static/graph.png>
+
+<img/static/graph.png> [6]
 File: img/static/graph2.png Graphic file (type bmp)
  <img/static/graph2.png>
-[6]
 File: img/static/graph3.png Graphic file (type bmp)
  <img/static/graph3.png>
+[7]
 File: img/static/graph4.png Graphic file (type bmp)
- <img/static/graph4.png> [7]
+ <img/static/graph4.png> [8]
 File: img/static/bddlib1.png Graphic file (type bmp)
-
-<img/static/bddlib1.png>
+ <img/static/bddlib1.png>
 File: img/static/bddlib2.png Graphic file (type bmp)
- <img/static/bddlib2.png>
+
+<img/static/bddlib2.png>
 File: img/static/bddlib3.png Graphic file (type bmp)
  <img/static/bddlib3.png>
 File: img/static/bddlib4.png Graphic file (type bmp)
-
-<img/static/bddlib4.png>
-Underfull \hbox (badness 1014) in paragraph at lines 442--443
+ <img/static/bddlib4.png>
+Underfull \hbox (badness 1014) in paragraph at lines 447--448
 []\OT1/ptm/m/n/12 SapporoBDD, TdZdd (Graphillion \JY1/mc/m/n/12 の内部\OT1/ptm/
 m/n/12 ): ER-ATO \JY1/mc/m/n/12 が作 っ た
  []
 
-[8]
+[9]
 File: img/static/bdd-astar.png Graphic file (type bmp)
  <img/static/bdd-astar.png>
 File: img/static/bdd-astar-ipc.png Graphic file (type bmp)
- <img/static/bdd-astar-ipc.png> [9]
+ <img/static/bdd-astar-ipc.png>
 File: img/static/bdd-paper1.png Graphic file (type bmp)
 
 <img/static/bdd-paper1.png>
 File: img/static/bdd-paper2.png Graphic file (type bmp)
- <img/static/bdd-paper2.png>) [10]
+ <img/static/bdd-paper2.png> [10]
+LaTeX Font Info:    Font shape `JT1/gt/bx/n' in size <12> not available
+(Font)              Font shape `JT1/gt/m/n' tried instead on input line 533.
+LaTeX Font Info:    Font shape `JY1/gt/bx/n' in size <12> not available
+(Font)              Font shape `JY1/gt/m/n' tried instead on input line 533.
+
+
+LaTeX Font Warning: Font shape `JT1/gt/bx/it' undefined
+(Font)              using `JT1/gt/bx/n' instead on input line 533.
+
+
+LaTeX Font Warning: Font shape `JY1/gt/bx/it' undefined
+(Font)              using `JY1/gt/bx/n' instead on input line 533.
+
+LaTeX Font Info:    Font shape `OT1/ptm/bx/it' in size <12> not available
+(Font)              Font shape `OT1/ptm/b/it' tried instead on input line 533.
+LaTeX Font Info:    Font shape `JT1/gt/bx/it' in size <12> not available
+(Font)              Font shape `JT1/gt/m/n' tried instead on input line 535.
+LaTeX Font Info:    Font shape `JY1/gt/bx/it' in size <12> not available
+(Font)              Font shape `JY1/gt/m/n' tried instead on input line 535.
+)
 Package atveryend Info: Empty hook `BeforeClearDocument' on input line 25.
+ [11
+
+]
 Package atveryend Info: Empty hook `AfterLastShipout' on input line 25.
  (./resume.aux)
 Package atveryend Info: Empty hook `AtVeryEndDocument' on input line 25.
@@ -822,12 +843,12 @@ LaTeX Font Warning: Some font shapes were not available, defaults substituted.
 Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 25.
  ) 
 Here is how much of TeX's memory you used:
- 14852 strings out of 493723
- 262920 string characters out of 6152570
- 344229 words of memory out of 5000000
- 18030 multiletter control sequences out of 15000+600000
- 22707 words of font info for 82 fonts, out of 8000000 for 9000
+ 14861 strings out of 493723
+ 263040 string characters out of 6152570
+ 344230 words of memory out of 5000000
+ 18038 multiletter control sequences out of 15000+600000
+ 23240 words of font info for 83 fonts, out of 8000000 for 9000
  929 hyphenation exceptions out of 8191
- 72i,9n,51p,450b,377s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 72i,9n,51p,450b,471s stack positions out of 5000i,500n,10000p,200000b,80000s
 
-Output written on resume.dvi (10 pages, 33824 bytes).
+Output written on resume.dvi (11 pages, 34520 bytes).
