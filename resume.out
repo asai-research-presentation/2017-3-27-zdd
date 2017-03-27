@@ -1,0 +1,32 @@
+\BOOKMARK [1][-]{section.1}{1 注意}{}% 1
+\BOOKMARK [1][-]{section.2}{2 [}{}% 2
+\BOOKMARK [1][-]{section.3}{3 今日のお話}{}% 3
+\BOOKMARK [1][-]{section.4}{4 Decision Diagrams \(DDs\)}{}% 4
+\BOOKMARK [2][-]{subsection.4.1}{4.1 XOR関数を線形サイズで保持できる}{section.4}% 5
+\BOOKMARK [2][-]{subsection.4.2}{4.2 Boolean Function を表現してみる \(真理値表\)}{section.4}% 6
+\BOOKMARK [2][-]{subsection.4.3}{4.3 Boolean Function を表現してみる \(木/Decision Tree\)}{section.4}% 7
+\BOOKMARK [2][-]{subsection.4.4}{4.4 Boolean Function を表現してみる \(木/Decision Tree\)}{section.4}% 8
+\BOOKMARK [2][-]{subsection.4.5}{4.5 Boolean Function を表現してみる \(グラフ/Decision Diagram\)}{section.4}% 9
+\BOOKMARK [2][-]{subsection.4.6}{4.6 Decision Diagram 定義}{section.4}% 10
+\BOOKMARK [2][-]{subsection.4.7}{4.7 関数同士の演算を高速に行える}{section.4}% 11
+\BOOKMARK [2][-]{subsection.4.8}{4.8 縮約規則}{section.4}% 12
+\BOOKMARK [2][-]{subsection.4.9}{4.9 BDD 同士の演算: Apply}{section.4}% 13
+\BOOKMARK [2][-]{subsection.4.10}{4.10 用途: 自動定理証明、回路の検証、自動プログラム検証 \(Formal Methods, Verification\)}{section.4}% 14
+\BOOKMARK [1][-]{section.5}{5 BDDの問題点}{}% 15
+\BOOKMARK [2][-]{subsection.5.1}{5.1 実際にやってみると…}{section.5}% 16
+\BOOKMARK [2][-]{subsection.5.2}{5.2 別の縮約規則: Zero-suppressed Decision Diagram \(ZDD\)}{section.5}% 17
+\BOOKMARK [2][-]{subsection.5.3}{5.3 同じ関数でもzddのほうが小さいのは…}{section.5}% 18
+\BOOKMARK [1][-]{section.6}{6 ZDD は使える}{}% 19
+\BOOKMARK [2][-]{subsection.6.1}{6.1 例えば… \(ERATOのスライドを借用\)}{section.6}% 20
+\BOOKMARK [2][-]{subsection.6.2}{6.2 例えば… \(ERATOのスライドを借用\)}{section.6}% 21
+\BOOKMARK [2][-]{subsection.6.3}{6.3 例えば… \(ERATOのスライドを借用\)}{section.6}% 22
+\BOOKMARK [2][-]{subsection.6.4}{6.4 例えば… \(ERATOのスライドを借用\)}{section.6}% 23
+\BOOKMARK [2][-]{subsection.6.5}{6.5 ZDDとBDDでは扱うApply操作が違う}{section.6}% 24
+\BOOKMARK [1][-]{section.7}{7 本題: BDD/ZDDをLispから使うためのライブラリ}{}% 25
+\BOOKMARK [2][-]{subsection.7.1}{7.1 そのうち、ZDD に対応するのはあまり多くない}{section.7}% 26
+\BOOKMARK [1][-]{section.8}{8 Mate-ZDD}{}% 27
+\BOOKMARK [1][-]{section.9}{9 Future Work}{}% 28
+\BOOKMARK [2][-]{subsection.9.1}{9.1 BDDベースのプランニングアルゴリズムは存在する:}{section.9}% 29
+\BOOKMARK [2][-]{subsection.9.2}{9.2 International Planning Competition 2014 で優勝}{section.9}% 30
+\BOOKMARK [2][-]{subsection.9.3}{9.3 強い}{section.9}% 31
+\BOOKMARK [1][-]{section.10}{10 まとめ}{}% 32

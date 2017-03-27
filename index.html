@@ -1,0 +1,1368 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<title>Decision Diagram と CL-CUDD の紹介</title>
+<!-- 2017-03-27 月 14:56 -->
+<meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta  name="generator" content="Org-mode" />
+<meta  name="author" content="Masataro Asai" />
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  .title  { text-align: center; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { color: green; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px #eee;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: visible;
+    padding-top: 1.2em;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    background-color: white;
+    top: -10px;
+    right: 10px;
+    padding: 3px;
+    border: 1px solid black;
+  }
+  pre.src:hover:before { display: inline;}
+  pre.src-sh:before    { content: 'sh'; }
+  pre.src-bash:before  { content: 'sh'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-R:before     { content: 'R'; }
+  pre.src-perl:before  { content: 'Perl'; }
+  pre.src-java:before  { content: 'Java'; }
+  pre.src-sql:before   { content: 'SQL'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.right  { text-align: center;  }
+  th.left   { text-align: center;   }
+  th.center { text-align: center; }
+  td.right  { text-align: right;  }
+  td.left   { text-align: left;   }
+  td.center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara:nth-child(2) { display: inline; }
+  .footpara { display: block; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  /*]]>*/-->
+</style>
+<link rel="stylesheet" type="text/css" href="css/layout.css" />
+<link rel="stylesheet" type="text/css" href="css/default.css" />
+<script type="text/javascript" src="js/jquery.js"></script>
+<script type="text/javascript" src="js/jquery.loupe.min.js"></script>
+<script type="text/javascript" src="js/jgestures/jgestures.min.js"></script>
+<script type="text/javascript" src="js/code.js"></script>
+<script type="text/javascript" src="MathJax/MathJax.js"></script>
+<script type="text/javascript" src="js/mathjaxconf.js"></script>
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2013 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+<script type="text/javascript" src="http://orgmode.org/mathjax/MathJax.js"></script>
+<script type="text/javascript">
+<!--/*--><![CDATA[/*><!--*/
+    MathJax.Hub.Config({
+        // Only one of the two following lines, depending on user settings
+        // First allows browser-native MathML display, second forces HTML/CSS
+        //  config: ["MMLorHTML.js"], jax: ["input/TeX"],
+            jax: ["input/TeX", "output/HTML-CSS"],
+        extensions: ["tex2jax.js","TeX/AMSmath.js","TeX/AMSsymbols.js",
+                     "TeX/noUndefined.js"],
+        tex2jax: {
+            inlineMath: [ ["\\(","\\)"] ],
+            displayMath: [ ['$$','$$'], ["\\[","\\]"], ["\\begin{displaymath}","\\end{displaymath}"] ],
+            skipTags: ["script","noscript","style","textarea","pre","code"],
+            ignoreClass: "tex2jax_ignore",
+            processEscapes: false,
+            processEnvironments: true,
+            preview: "TeX"
+        },
+        showProcessingMessages: true,
+        displayAlign: "center",
+        displayIndent: "2em",
+
+        "HTML-CSS": {
+             scale: 100,
+             availableFonts: ["STIX","TeX"],
+             preferredFont: "TeX",
+             webFont: "TeX",
+             imageFont: "TeX",
+             showMathMenu: true,
+        },
+        MMLorHTML: {
+             prefer: {
+                 MSIE:    "MML",
+                 Firefox: "MML",
+                 Opera:   "HTML",
+                 other:   "HTML"
+             }
+        }
+    });
+/*]]>*///-->
+</script>
+</head>
+<body>
+<div id="content">
+<h1 class="title">Decision Diagram と CL-CUDD の紹介</h1>
+<div class="outline-text-1">
+
+</div>
+
+<div id="outline-container-sec-1" class="outline-2">
+<h2 id="sec-1"><span class="section-number-2">1</span> 注意</h2>
+<div class="outline-text-2" id="text-1">
+<p>
+今日の発表はいろいろなヒトの発表を借りて切り貼りしています
+</p>
+
+<ul class="org-ul">
+<li>『フカシギの数え方』 おねえさんといっしょ！ みんなで数えてみよう！ 
+</li>
+<li>ZDD とフロンティア法 2017年版 ver 0.1 奈良先端科学技術大学院大学 川原 純
+</li>
+<li>ZDDを用いたパスの列挙と索引生成 川原 純 (JST ERATO 研究員)
+</li>
+<li>ICAPS2012-Tutorial Decision Diagrams in Discrete and Continuous Planning (Scott Sanner)
+</li>
+<li>AAAI2016-Tutorial  Symbolic Methods for Probabilistic Inference, Optimization, and Decision-making (Scott Sanner)
+</li>
+<li>ICAPS2016-Tutorial Decision Diagrams for Discrete Optimization (John Hooker CMU)
+</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-sec-2" class="outline-2">
+<h2 id="sec-2"><span class="section-number-2">2</span> Decision Diagram とは&#xa0;&#xa0;&#xa0;<span class="tag"><span class="4min">4min</span></span></h2>
+<div class="outline-text-2" id="text-2">
+<p>
+「『フカシギの数え方』 おねえさんといっしょ！ みんなで数えてみよう！」で紹介されないデータ構造
+</p>
+
+<p>
+二倍速で見ましょう
+</p>
+
+<iframe width="600" height="400" src="https://www.youtube.com/embed/Q4gTV4r0zRs" frameborder="0" allowfullscreen></iframe>
+</div>
+</div>
+
+<div id="outline-container-sec-3" class="outline-2">
+<h2 id="sec-3"><span class="section-number-2">3</span> 今日のお話</h2>
+<div class="outline-text-2" id="text-3">
+
+<div class="figure">
+<p><img src="img/static/latest-tech.png" alt="latest-tech.png" />
+</p>
+</div>
+
+<ul class="org-ul">
+<li>これをCLから扱うライブラリを紹介
+</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-sec-4" class="outline-2">
+<h2 id="sec-4"><span class="section-number-2">4</span> Decision Diagrams (DDs)</h2>
+<div class="outline-text-2" id="text-4">
+<div class="container-fluid">
+<div class="row-fluid">
+<div class="span6">
+
+<div class="figure">
+<p><img src="img/static/dd.png" alt="dd.png" />
+</p>
+</div>
+
+</div>
+<div class="span6">
+<ul class="org-ul">
+<li>決定木(Decision Tree) のグラフ版
+</li>
+<li>関数をコンパクトに表現できる:
+<ul class="org-ul">
+<li>\(B = \{0, 1\}\)
+</li>
+<li>\(f: B^n \rightarrow B\) : BDD,ZDD
+</li>
+<li>\(f: B^n \rightarrow R\) も可能 (ADD)
+</li>
+</ul>
+</li>
+</ul>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+<div id="outline-container-sec-4-1" class="outline-3">
+<h3 id="sec-4-1"><span class="section-number-3">4.1</span> XOR関数を線形サイズで保持できる</h3>
+<div class="outline-text-3" id="text-4-1">
+<p>
+Treeでは指数サイズのノードが必要。
+</p>
+
+<p>
+AND と OR は DDでもTreeでも線形。
+</p>
+
+
+<div class="figure">
+<p><img src="img/static/dd-xor.png" alt="dd-xor.png" />
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-4-2" class="outline-3">
+<h3 id="sec-4-2"><span class="section-number-3">4.2</span> Boolean Function を表現してみる (真理値表)</h3>
+<div class="outline-text-3" id="text-4-2">
+<div class="container-fluid">
+<div class="row-fluid">
+<div class="span6">
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="center" />
+
+<col  class="center" />
+
+<col  class="center" />
+</colgroup>
+
+<colgroup>
+<col  class="center" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="center">\(a\)</th>
+<th scope="col" class="center">\(b\)</th>
+<th scope="col" class="center">\(c\)</th>
+<th scope="col" class="center">\(F(a,b,c)\)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="center">0</td>
+<td class="center">0</td>
+<td class="center">0</td>
+<td class="center">0</td>
+</tr>
+
+<tr>
+<td class="center">0</td>
+<td class="center">0</td>
+<td class="center">1</td>
+<td class="center">0</td>
+</tr>
+
+<tr>
+<td class="center">0</td>
+<td class="center">1</td>
+<td class="center">0</td>
+<td class="center">0</td>
+</tr>
+
+<tr>
+<td class="center">0</td>
+<td class="center">1</td>
+<td class="center">1</td>
+<td class="center">1</td>
+</tr>
+
+<tr>
+<td class="center">1</td>
+<td class="center">0</td>
+<td class="center">0</td>
+<td class="center">0</td>
+</tr>
+
+<tr>
+<td class="center">1</td>
+<td class="center">0</td>
+<td class="center">1</td>
+<td class="center">1</td>
+</tr>
+
+<tr>
+<td class="center">1</td>
+<td class="center">1</td>
+<td class="center">0</td>
+<td class="center">0</td>
+</tr>
+
+<tr>
+<td class="center">1</td>
+<td class="center">1</td>
+<td class="center">1</td>
+<td class="center">1</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+<div class="span6">
+<ul class="org-ul">
+<li>真理値表を使えば出来る
+</li>
+<li>動くけど、もっとコンパクトに出来る
+</li>
+</ul>
+
+</div>
+
+</div>
+
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-4-3" class="outline-3">
+<h3 id="sec-4-3"><span class="section-number-3">4.3</span> Boolean Function を表現してみる (木/Decision Tree)</h3>
+<div class="outline-text-3" id="text-4-3">
+<p>
+ノードごとにTrue/Falseかで進む枝が決まる
+</p>
+
+<p>
+表よりコンパクト
+</p>
+
+<div class="container-fluid">
+<div class="row-fluid">
+<div class="span8">
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="center" />
+
+<col  class="center" />
+
+<col  class="center" />
+</colgroup>
+
+<colgroup>
+<col  class="center" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="center">\(a\)</th>
+<th scope="col" class="center">\(b\)</th>
+<th scope="col" class="center">\(c\)</th>
+<th scope="col" class="center">\(F(a,b,c)\)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="center">0</td>
+<td class="center">0</td>
+<td class="center">0</td>
+<td class="center">0</td>
+</tr>
+
+<tr>
+<td class="center">0</td>
+<td class="center">0</td>
+<td class="center">1</td>
+<td class="center">0</td>
+</tr>
+
+<tr>
+<td class="center">0</td>
+<td class="center">1</td>
+<td class="center">0</td>
+<td class="center">0</td>
+</tr>
+
+<tr>
+<td class="center">0</td>
+<td class="center">1</td>
+<td class="center">1</td>
+<td class="center">1</td>
+</tr>
+
+<tr>
+<td class="center">1</td>
+<td class="center">0</td>
+<td class="center">0</td>
+<td class="center">0</td>
+</tr>
+
+<tr>
+<td class="center">1</td>
+<td class="center">0</td>
+<td class="center">1</td>
+<td class="center">1</td>
+</tr>
+
+<tr>
+<td class="center">1</td>
+<td class="center">1</td>
+<td class="center">0</td>
+<td class="center">0</td>
+</tr>
+
+<tr>
+<td class="center">1</td>
+<td class="center">1</td>
+<td class="center">1</td>
+<td class="center">1</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+<div class="span4">
+
+<div class="figure">
+<p><img src="img/dd-tree.png" alt="dd-tree.png" />
+</p>
+</div>
+
+</div>
+
+</div>
+
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-4-4" class="outline-3">
+<h3 id="sec-4-4"><span class="section-number-3">4.4</span> Boolean Function を表現してみる (木/Decision Tree)</h3>
+<div class="outline-text-3" id="text-4-4">
+<p>
+でもまだ無駄な重複がある
+</p>
+
+<div class="container-fluid">
+<div class="row-fluid">
+<div class="span8">
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="center" />
+
+<col  class="center" />
+
+<col  class="center" />
+</colgroup>
+
+<colgroup>
+<col  class="center" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="center">\(a\)</th>
+<th scope="col" class="center">\(b\)</th>
+<th scope="col" class="center">\(c\)</th>
+<th scope="col" class="center">\(F(a,b,c)\)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="center">0</td>
+<td class="center">0</td>
+<td class="center">0</td>
+<td class="center">0</td>
+</tr>
+
+<tr>
+<td class="center">0</td>
+<td class="center">0</td>
+<td class="center">1</td>
+<td class="center">0</td>
+</tr>
+
+<tr>
+<td class="center">0</td>
+<td class="center">1</td>
+<td class="center">0</td>
+<td class="center">0</td>
+</tr>
+
+<tr>
+<td class="center">0</td>
+<td class="center">1</td>
+<td class="center">1</td>
+<td class="center">1</td>
+</tr>
+
+<tr>
+<td class="center">1</td>
+<td class="center">0</td>
+<td class="center">0</td>
+<td class="center">0</td>
+</tr>
+
+<tr>
+<td class="center">1</td>
+<td class="center">0</td>
+<td class="center">1</td>
+<td class="center">1</td>
+</tr>
+
+<tr>
+<td class="center">1</td>
+<td class="center">1</td>
+<td class="center">0</td>
+<td class="center">0</td>
+</tr>
+
+<tr>
+<td class="center">1</td>
+<td class="center">1</td>
+<td class="center">1</td>
+<td class="center">1</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+<div class="span4">
+
+<div class="figure">
+<p><img src="img/dd-tree2.png" alt="dd-tree2.png" />
+</p>
+</div>
+
+</div>
+
+</div>
+
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-4-5" class="outline-3">
+<h3 id="sec-4-5"><span class="section-number-3">4.5</span> Boolean Function を表現してみる (グラフ/Decision Diagram)</h3>
+<div class="outline-text-3" id="text-4-5">
+<p>
+重複を共有してグラフにしよう!
+</p>
+
+<div class="container-fluid">
+<div class="row-fluid">
+<div class="span9">
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="center" />
+
+<col  class="center" />
+
+<col  class="center" />
+</colgroup>
+
+<colgroup>
+<col  class="center" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="center">\(a\)</th>
+<th scope="col" class="center">\(b\)</th>
+<th scope="col" class="center">\(c\)</th>
+<th scope="col" class="center">\(F(a,b,c)\)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="center">0</td>
+<td class="center">0</td>
+<td class="center">0</td>
+<td class="center">0</td>
+</tr>
+
+<tr>
+<td class="center">0</td>
+<td class="center">0</td>
+<td class="center">1</td>
+<td class="center">0</td>
+</tr>
+
+<tr>
+<td class="center">0</td>
+<td class="center">1</td>
+<td class="center">0</td>
+<td class="center">0</td>
+</tr>
+
+<tr>
+<td class="center">0</td>
+<td class="center">1</td>
+<td class="center">1</td>
+<td class="center">1</td>
+</tr>
+
+<tr>
+<td class="center">1</td>
+<td class="center">0</td>
+<td class="center">0</td>
+<td class="center">0</td>
+</tr>
+
+<tr>
+<td class="center">1</td>
+<td class="center">0</td>
+<td class="center">1</td>
+<td class="center">1</td>
+</tr>
+
+<tr>
+<td class="center">1</td>
+<td class="center">1</td>
+<td class="center">0</td>
+<td class="center">0</td>
+</tr>
+
+<tr>
+<td class="center">1</td>
+<td class="center">1</td>
+<td class="center">1</td>
+<td class="center">1</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+<div class="span3">
+
+<div class="figure">
+<p><img src="img/static/dd-dd.png" alt="dd-dd.png" />
+</p>
+</div>
+
+</div>
+
+</div>
+
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-4-6" class="outline-3">
+<h3 id="sec-4-6"><span class="section-number-3">4.6</span> Decision Diagram 定義</h3>
+<div class="outline-text-3" id="text-4-6">
+<pre class="example">
+node :: (index, then, else)
+</pre>
+
+<p>
+then 枝: index 番目のboolean引数がtrue の時にたどる枝 (1-枝, true枝)
+</p>
+
+<p>
+else 枝: index 番目のboolean引数がfalse の時にたどる枝 (0-枝, false枝)
+</p>
+
+<p>
+ハッシュテーブルでノードを管理
+</p>
+
+<p>
+→同じindex と 子ノード を持つノードは1つしか存在しない (キャッシュされる)
+</p>
+
+<p>
+かつ、グラフ上で常にindexが降順で現れる (Ordered DD)
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-4-7" class="outline-3">
+<h3 id="sec-4-7"><span class="section-number-3">4.7</span> 関数同士の演算を高速に行える</h3>
+<div class="outline-text-3" id="text-4-7">
+<div class="container-fluid">
+<div class="row-fluid">
+<div class="span6">
+<ul class="org-ul">
+<li>関数同士の演算(代数系)
+</li>
+<li>BDD: \(\neg f, f\land g, f\lor g\)
+</li>
+<li>ZDD: \(f \setminus g, f\cap g, f\cup g\)
+</li>
+<li>ADD: \(-f, f\oplus g, f\otimes g, \max (f,g)\)
+</li>
+<li>コンパクトなまま効率的に計算できる
+</li>
+</ul>
+
+</div>
+<div class="span6">
+
+<div class="figure">
+<p><img src="img/static/dd-operation.png" alt="dd-operation.png" />
+</p>
+</div>
+
+</div>
+
+</div>
+
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-4-8" class="outline-3">
+<h3 id="sec-4-8"><span class="section-number-3">4.8</span> 縮約規則</h3>
+<div class="outline-text-3" id="text-4-8">
+<p>
+DD に縮約規則をつけることでさらにコンパクトに出来る
+</p>
+
+<p>
+1-枝と0-枝が同じノード を削除 ← 出力に影響を与えない <b>無駄なノード</b> だから
+</p>
+
+<div class="container-fluid">
+<div class="row-fluid">
+<div class="span2">
+<p>
+
+</p>
+
+</div>
+<div class="span8">
+
+<div class="figure">
+<p><img src="img/bdd-reduction.png" alt="bdd-reduction.png" />
+</p>
+</div>
+
+</div>
+<div class="span2">
+<p>
+
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+<p>
+正式には <b>Ordered BDD (OBDD) == DD + 縮約規則 + 変数順序</b>
+</p>
+
+<p>
+Ordered でないBDDを使うことはまれなので, BDDといえば普通OBDD
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-4-9" class="outline-3">
+<h3 id="sec-4-9"><span class="section-number-3">4.9</span> BDD 同士の演算: Apply</h3>
+<div class="outline-text-3" id="text-4-9">
+<p>
+2つのBoolean関数fとgの論理和/論理積などをとることができる
+</p>
+
+<p>
+\((f\, R\, g)(x) = f(x)\, R\, g(x),\, x = (x_0,x_1,\ldots)\) のとき (\(R=\land,\lor,\ldots\))、
+</p>
+
+<p>
+\[
+f\, R\, g = \text{BDD}(i,\quad f_{x_i=1}\, R\, g_{x_i=1},\quad f_{x_i=0}\, R\, g_{x_i=0})
+\]
+</p>
+
+<p>
+ただし \(i\) は \(f,g\) のルートノードのindex
+</p>
+
+<p>
+\(f\, R\, g = \text{Apply}(f,g,R)\) と書くと、 Apply は再帰的に定義可能。
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-lisp">(<span style="color: #a020f0;">defun</span> <span style="color: #0000ff;">apply</span> (f g op)
+  (match* (f g)
+    (((bdd index1     then1 else1)
+      (bdd (= index1) then2 else2))
+     (make-bdd <span style="color: #483d8b;">:index</span> index1
+               <span style="color: #483d8b;">:then</span> (apply then1 then2 op)
+               <span style="color: #483d8b;">:else</span> (apply else1 else2 op)))
+    ...(index&#12364;&#36949;&#12358;&#22580;&#21512;&#12394;&#12393;)...
+    ...(leaf node &#12398;&#22580;&#21512;&#12394;&#12393;)...            ))
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-4-10" class="outline-3">
+<h3 id="sec-4-10"><span class="section-number-3">4.10</span> 用途: 自動定理証明、回路の検証、自動プログラム検証 (Formal Methods, Verification)</h3>
+<div class="outline-text-3" id="text-4-10">
+<div class="container-fluid">
+<div class="row-fluid">
+<div class="span6">
+<p>
+指数的に多い要素を「並列に」操作できる
+</p>
+
+<p>
+→ <b>全ケースを余すこと無く検査できる</b>
+</p>
+
+<p>
+注: ここでいう「並列」は、「多数の要素をまとめて処理」ぐらいの意味
+</p>
+
+<p>
+並列計算機を走らせることとは関連は無い (が、その意味の並列化も可能)
+</p>
+
+</div>
+<div class="span6">
+
+<div class="figure">
+<p><img src="img/static/circuit.png" alt="circuit.png" />
+</p>
+</div>
+
+</div>
+
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-5" class="outline-2">
+<h2 id="sec-5"><span class="section-number-2">5</span> BDDの問題点</h2>
+<div class="outline-text-2" id="text-5">
+<p>
+BDD は論理関数を表現するのには良いが、ある種類の関数が得意でない
+</p>
+
+<p>
+<b>集合族</b>: \(F=\{\{a,b\}, \{a,c\}, \{c\}\}\) &#x2014; をBDDで表してみる
+</p>
+
+<p>
+関数 \(f(x_0,x_1,x_2)\) :
+</p>
+
+<p>
+例: \(S=\{a,b\}\) は Fに含まれているか?
+</p>
+
+<p>
+集合 \(S\) が 集合族\(F\) に含まれれば \(f=1\), 含まれなければ \(f=0\)
+</p>
+
+<p>
+引数 \(x_0,x_1,x_2\): 各要素 \(a,b,c\) が \(S\) に入力に含まれていれば1,含まれていなければ0.
+</p>
+
+<p>
+\(f(1,1,0) = 1\), 従って \(S \in F\)
+</p>
+</div>
+
+<div id="outline-container-sec-5-1" class="outline-3">
+<h3 id="sec-5-1"><span class="section-number-3">5.1</span> 実際にやってみると&#x2026;</h3>
+<div class="outline-text-3" id="text-5-1">
+<p>
+左は <b>いまいち小さくならない</b> 。
+</p>
+
+<div class="alignright">
+<ul class="org-ul">
+<li>→ これを改良したのが右の <b>ZDD</b>
+</li>
+</ul>
+
+</div>
+
+
+<div class="figure">
+<p><img src="img/static/bdd-zdd.png" alt="bdd-zdd.png" />
+</p>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-sec-5-2" class="outline-3">
+<h3 id="sec-5-2"><span class="section-number-3">5.2</span> 別の縮約規則: Zero-suppressed Decision Diagram (ZDD)</h3>
+<div class="outline-text-3" id="text-5-2">
+<div class="container-fluid">
+<div class="row-fluid">
+<div class="span6">
+<div class="center">
+<p>
+BDD: 同じなら削除
+</p>
+</div>
+
+<div class="figure">
+<p><img src="img/static/reduction-rule-bdd.png" alt="reduction-rule-bdd.png" />
+</p>
+</div>
+
+</div>
+<div class="span6">
+<div class="center">
+<p>
+ZDD: 1-枝が0なら削除
+</p>
+</div>
+
+<div class="figure">
+<p><img src="img/static/reduction-rule-zdd.png" alt="reduction-rule-zdd.png" />
+</p>
+</div>
+
+</div>
+
+</div>
+
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-5-3" class="outline-3">
+<h3 id="sec-5-3"><span class="section-number-3">5.3</span> 同じ関数でもzddのほうが小さいのは&#x2026;</h3>
+<div class="outline-text-3" id="text-5-3">
+
+<div class="figure">
+<p><img src="img/static/bdd-zdd2.png" alt="bdd-zdd2.png" />
+</p>
+</div>
+
+<ul class="org-ul">
+<li>理由: <b>殆どの場合で関数の値が0</b> だから
+</li>
+<li>→ 0と1の割合が同じぐらいの時はbdd, <b>0が多い場合にはzddが良い</b>
+</li>
+</ul>
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-6" class="outline-2">
+<h2 id="sec-6"><span class="section-number-2">6</span> ZDD は使える</h2>
+<div class="outline-text-2" id="text-6">
+<p>
+0が多い場合にはzddが良い
+</p>
+
+<ul class="org-ul">
+<li><b>最悪指数時間の問題を動的計画法で解く場合…</b>
+<ul class="org-ul">
+<li><b>空間全体</b> のうち <b>使う空間</b> はほんの少しなので…
+</li>
+<li>保持すべきデータをzddに貯めれば 殆ど0
+</li>
+<li><b>BDD より ZDD が速いはず!</b>
+</li>
+<li>指数的に速いアルゴリズムを書くのに役立つハズ ≠ 定数倍の高速化
+</li>
+</ul>
+</li>
+</ul>
+</div>
+
+<div id="outline-container-sec-6-1" class="outline-3">
+<h3 id="sec-6-1"><span class="section-number-3">6.1</span> 例えば&#x2026; (ERATOのスライドを借用)</h3>
+<div class="outline-text-3" id="text-6-1">
+
+<div class="figure">
+<p><img src="img/static/graph.png" alt="graph.png" />
+</p>
+</div>
+
+<div class="note">
+<p>
+ZDD とフロンティア法 2017年版 ver 0.1 奈良先端科学技術大学院大学 川原 純
+</p>
+
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-6-2" class="outline-3">
+<h3 id="sec-6-2"><span class="section-number-3">6.2</span> 例えば&#x2026; (ERATOのスライドを借用)</h3>
+<div class="outline-text-3" id="text-6-2">
+
+<div class="figure">
+<p><img src="img/static/graph2.png" alt="graph2.png" />
+</p>
+</div>
+
+<div class="note">
+<p>
+ZDD とフロンティア法 2017年版 ver 0.1 奈良先端科学技術大学院大学 川原 純
+</p>
+
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-6-3" class="outline-3">
+<h3 id="sec-6-3"><span class="section-number-3">6.3</span> 例えば&#x2026; (ERATOのスライドを借用)</h3>
+<div class="outline-text-3" id="text-6-3">
+
+<div class="figure">
+<p><img src="img/static/graph3.png" alt="graph3.png" />
+</p>
+</div>
+
+<div class="note">
+<p>
+ZDD とフロンティア法 2017年版 ver 0.1 奈良先端科学技術大学院大学 川原 純
+</p>
+
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-6-4" class="outline-3">
+<h3 id="sec-6-4"><span class="section-number-3">6.4</span> 例えば&#x2026; (ERATOのスライドを借用)</h3>
+<div class="outline-text-3" id="text-6-4">
+
+<div class="figure">
+<p><img src="img/static/graph4.png" alt="graph4.png" />
+</p>
+</div>
+
+<div class="note">
+<p>
+ZDD とフロンティア法 2017年版 ver 0.1 奈良先端科学技術大学院大学 川原 純
+</p>
+
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-6-5" class="outline-3">
+<h3 id="sec-6-5"><span class="section-number-3">6.5</span> ZDDとBDDでは扱うApply操作が違う</h3>
+<div class="outline-text-3" id="text-6-5">
+<p>
+BDD: 論理操作 &#x2014; \(\neg f, f\land g, f\lor g\)
+</p>
+
+<p>
+ZDD: 集合操作 &#x2014; \(f \setminus g, f\cap g, f\cup g\)
+</p>
+
+<p>
+互換性はそこまでではない アルゴリズムも別に作らないといけない
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-7" class="outline-2">
+<h2 id="sec-7"><span class="section-number-2">7</span> 本題: BDD/ZDDをLispから使うためのライブラリ</h2>
+<div class="outline-text-2" id="text-7">
+<p>
+BDD は沢山のライブラリがある
+</p>
+
+<div class="container-fluid">
+<div class="row-fluid">
+<div class="span3">
+
+<div class="figure">
+<p><img src="img/static/bddlib1.png" alt="bddlib1.png" />
+</p>
+</div>
+
+</div>
+<div class="span3">
+
+<div class="figure">
+<p><img src="img/static/bddlib2.png" alt="bddlib2.png" />
+</p>
+</div>
+
+</div>
+<div class="span3">
+
+<div class="figure">
+<p><img src="img/static/bddlib3.png" alt="bddlib3.png" />
+</p>
+</div>
+
+</div>
+<div class="span3">
+
+<div class="figure">
+<p><img src="img/static/bddlib4.png" alt="bddlib4.png" />
+</p>
+</div>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+<div id="outline-container-sec-7-1" class="outline-3">
+<h3 id="sec-7-1"><span class="section-number-3">7.1</span> そのうち、ZDD に対応するのはあまり多くない</h3>
+<div class="outline-text-3" id="text-7-1">
+<ul class="org-ul">
+<li>CUDD: 大御所, Cのライブラリ
+</li>
+<li>SapporoBDD, TdZdd (Graphillionの内部): ERATO が作ったC/Pythonライブラリ, 
+</li>
+<li>ほか数件だけ, つまりZDDはあまりまだ注目されていない
+</li>
+
+<li>CUDD へのCFFIバインディング: CL-CUDD が存在
+</li>
+
+<li>→ zdd対応なし, CLOS(遅い), Quicklisp登録なし, テスト無し, Tutorial無し、
+CUDDを自分でビルドしてインストールする必要あり, 最新版のCUDDに対応せず。
+</li>
+
+<li>自分がやったこと: ココらへんを整備して、 <b>これで何かを作れることを実証する</b> こと。
+</li>
+</ul>
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-8" class="outline-2">
+<h2 id="sec-8"><span class="section-number-2">8</span> Mate-ZDD</h2>
+<div class="outline-text-2" id="text-8">
+<p>
+おねえさんのパス数え上げ問題を解くためのアルゴリズム
+</p>
+
+<p>
+Don Knuth の Simpath アルゴリズムをピュアZDDで書き直した、シンプルだが遅いバージョン
+</p>
+
+<p>
+これをCL-CUDDを使って実装した
+</p>
+
+<p>
+<a href="https://github.com/guicho271828/simpath">https://github.com/guicho271828/simpath</a>
+</p>
+
+<p>
+デモ
+</p>
+
+<div class="note">
+<p>
+川原 et al. 数理解析研究所講究録 第 1744 巻 2011 年 35-41 ZDD によるパスの列挙
+</p>
+
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-9" class="outline-2">
+<h2 id="sec-9"><span class="section-number-2">9</span> Future Work</h2>
+<div class="outline-text-2" id="text-9">
+<p>
+自分の専門である 自動行動計画ソルバ(プランナ)をZDDで作る
+</p>
+
+<ul class="org-ul">
+<li>配列ベースの普通の手法に比べた利点:
+<ul class="org-ul">
+<li>よりスケールする(大きな問題が解ける)
+<ul class="org-ul">
+<li>メモリ使用量が削減できる
+</li>
+<li>探索の情報を圧縮して保持できるから
+</li>
+</ul>
+</li>
+<li><b>細かなループの中のチューニングを気にしなくて良い</b>
+<ul class="org-ul">
+<li>ZDDが複数の状態をまとめて処理するから
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+
+<div id="outline-container-sec-9-1" class="outline-3">
+<h3 id="sec-9-1"><span class="section-number-3">9.1</span> BDDベースのプランニングアルゴリズムは存在する:</h3>
+<div class="outline-text-3" id="text-9-1">
+
+<div class="figure">
+<p><img src="img/static/bdd-astar.png" alt="bdd-astar.png" />
+</p>
+</div>
+
+<p>
+BDDよりZDDのほうがよいハズ
+</p>
+
+<p>
+← 指数爆発している全空間に比べ、実際に使われる空間サイズは小さいから
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-9-2" class="outline-3">
+<h3 id="sec-9-2"><span class="section-number-3">9.2</span> International Planning Competition 2014 で優勝</h3>
+<div class="outline-text-3" id="text-9-2">
+
+<div class="figure">
+<p><img src="img/static/bdd-astar-ipc.png" alt="bdd-astar-ipc.png" />
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-9-3" class="outline-3">
+<h3 id="sec-9-3"><span class="section-number-3">9.3</span> 強い</h3>
+<div class="outline-text-3" id="text-9-3">
+
+<div class="figure">
+<p><img src="img/static/bdd-paper1.png" alt="bdd-paper1.png" />
+</p>
+</div>
+
+
+<div class="figure">
+<p><img src="img/static/bdd-paper2.png" alt="bdd-paper2.png" />
+</p>
+</div>
+
+<div class="alignright">
+<p>
+コレに勝つ!
+</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-10" class="outline-2">
+<h2 id="sec-10"><span class="section-number-2">10</span> まとめ</h2>
+<div class="outline-text-2" id="text-10">
+<p>
+BDD, ZDD を概説
+</p>
+
+<p>
+CL-CUDD をまともに使える状態にした
+</p>
+
+<p>
+ZDDでお姉さん問題を解くソルバを作った
+</p>
+
+<p>
+プランニングに応用したい
+</p>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: Masataro Asai</p>
+<p class="date">Created: 2017-03-27 月 14:56</p>
+<p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 24.5.1 (<a href="http://orgmode.org">Org</a> mode 8.2.10)</p>
+<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>
