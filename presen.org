@@ -1,4 +1,4 @@
-#+title: Yet Another Org-mode Presentation Script
+#+title: Decision Diagram と CL-CUDD の紹介
 #+author: Masataro Asai
 #+include: "head.org"
 #+LINK: img file:img/%s
@@ -8,303 +8,476 @@
 #+LINK: sjpg file:img/static/%s.jpg
 
 #+BEGIN_outline-text-1
-#+BEGIN_XLARGE
-#+BEGIN_CENTER
-To Start Press "n"
-#+END_CENTER
-#+END_XLARGE
-
-#+BEGIN_CENTER
-*WARN* Turn off your custom keyboard shortcuts
-#+END_CENTER
-
-#+BEGIN_NOTE
-#+BEGIN_ALIGNRIGHT
-Made by guicho2.71828 (Masataro Asai)
-#+END_ALIGNRIGHT
-#+END_NOTE
 #+END_outline-text-1
 
-* What Is It?
+* 注意
 
-#+BEGIN_XLARGE
-An Alternative to
-#+BEGIN_CENTER
-Org-based Presentation
-#+END_CENTER
-#+BEGIN_ALIGNRIGHT
-Method
-#+END_ALIGNRIGHT
-#+END_XLARGE
+今日の発表はいろいろなヒトの発表を借りて切り貼りしています
 
-#+BEGIN_CENTER
-Proceed with "n"
-#+END_CENTER
++ 『フカシギの数え方』 おねえさんといっしょ！ みんなで数えてみよう！ 
++ ZDD とフロンティア法 2017年版 ver 0.1 奈良先端科学技術大学院大学 川原 純
++ ZDDを用いたパスの列挙と索引生成 川原 純 (JST ERATO 研究員)
++ ICAPS2012-Tutorial Decision Diagrams in Discrete and Continuous Planning (Scott Sanner)
++ AAAI2016-Tutorial  Symbolic Methods for Probabilistic Inference, Optimization, and Decision-making (Scott Sanner)
++ ICAPS2016-Tutorial Decision Diagrams for Discrete Optimization (John Hooker CMU)
 
-* Usage (on browsers)
+* Decision Diagram とは                                                :4min:
 
-#+BEGIN_SMALLER
+「『フカシギの数え方』 おねえさんといっしょ！ みんなで数えてみよう！」で紹介されないデータ構造
+
+二倍速で見ましょう
+
+#+HTML: <iframe width="600" height="400" src="https://www.youtube.com/embed/Q4gTV4r0zRs" frameborder="0" allowfullscreen></iframe>
+
+* 今日のお話
+
+[[spng:latest-tech]]
+
++ これをCLから扱うライブラリを紹介
+
+* Decision Diagrams (DDs)
 
 #+BEGIN_CONTAINER-FLUID
 #+BEGIN_ROW-FLUID
 #+BEGIN_SPAN6
-+ n,<Space> :: go to the next slide/expand a list
-+ p :: back to the previous slide
-+ u, ^ :: go to the parent section
-+ N :: expand all list in the current slide
+[[spng:dd]]
 #+END_SPAN6
 #+BEGIN_SPAN6
-+ s, or typing "go" :: jump to an arbitrary section (using minibuffer)
-+ d :: debugging mode (shows content border)
-+ <Ctrl-g> or <Esc> :: cancel current key strokes
-+ typing "help" :: show available commands in the minibuffer!
++ 決定木(Decision Tree) のグラフ版
++ 関数をコンパクトに表現できる:
+  + $B = \{0, 1\}$
+  + $f: B^n \rightarrow B$ : BDD,ZDD
+  + $f: B^n \rightarrow R$ も可能 (ADD)
 #+END_SPAN6
 #+END_ROW-FLUID
 #+END_CONTAINER-FLUID
 
-#+END_SMALLER
+** XOR関数を線形サイズで保持できる
 
-* Usage (on emacs)
+Treeでは指数サイズのノードが必要。
 
-1. clone [[https://github.com/guicho271828/another-org-info][our repo]]
+AND と OR は DDでもTreeでも線形。
 
-2. =make html= to publish
+[[spng:dd-xor]]
 
-3. show it on your browser!
+** Boolean Function を表現してみる (真理値表)
 
-* Virtue
+#+BEGIN_CONTAINER-FLUID
+#+BEGIN_ROW-FLUID
+#+BEGIN_SPAN6
+| / | <   |     | >   |         <> |
+|   | <c> | <c> | <c> | <c>        |
+|   | $a$ | $b$ | $c$ | $F(a,b,c)$ |
+|---+-----+-----+-----+------------|
+|   | 0   | 0   | 0   |          0 |
+|   | 0   | 0   | 1   |          0 |
+|   | 0   | 1   | 0   |          0 |
+|   | 0   | 1   | 1   |          1 |
+|   | 1   | 0   | 0   |          0 |
+|   | 1   | 0   | 1   |          1 |
+|   | 1   | 1   | 0   |          0 |
+|   | 1   | 1   | 1   |          1 |
+#+END_SPAN6
+#+BEGIN_SPAN6
++ 真理値表を使えば出来る
++ 動くけど、もっとコンパクトに出来る
+#+END_SPAN6
+#+END_ROW-FLUID
+#+END_CONTAINER-FLUID
 
-+ Simplicity
-  + =code.js= is a pure javascript, only has 200 lines (increasing as new features
-    are added)
-+ Extensibility
-  + you can write your own extension and its easy
-  + set a function to =keyManager.<your-key-strokes>=
-  + the key strokes should contain character $c$ within char code $32 < c < 126$
-    + =Space,!,",...A,B,C,...x,y,z,{,|,~=
-+ LICENSE
-  + GPLv3 ?? < not attatched a license yet
+** Boolean Function を表現してみる (木/Decision Tree)
 
-* Example: Expanding a List
+ノードごとにTrue/Falseかで進む枝が決まる
 
-+ *the dots* tell "/this is a content/"
-+ list
-+ list
-* Dependencies
-<<dependency>>
+表よりコンパクト
 
-+ jQuery (included)
-+ Inkscape (image conversion)
-+ org-mode (included)
-+ MathJax (optional submodule)
+#+BEGIN_CONTAINER-FLUID
+#+BEGIN_ROW-FLUID
+#+BEGIN_SPAN8
+| / | <   |     | >   |         <> |
+|   | <c> | <c> | <c> | <c>        |
+|   | $a$ | $b$ | $c$ | $F(a,b,c)$ |
+|---+-----+-----+-----+------------|
+|   | 0   | 0   | 0   |          0 |
+|   | 0   | 0   | 1   |          0 |
+|   | 0   | 1   | 0   |          0 |
+|   | 0   | 1   | 1   |          1 |
+|   | 1   | 0   | 0   |          0 |
+|   | 1   | 0   | 1   |          1 |
+|   | 1   | 1   | 0   |          0 |
+|   | 1   | 1   | 1   |          1 |
+#+END_SPAN8
+#+BEGIN_SPAN4
+[[png:dd-tree]]
+#+END_SPAN4
+#+END_ROW-FLUID
+#+END_CONTAINER-FLUID
 
-* LaTeX output
+** Boolean Function を表現してみる (木/Decision Tree)
 
-+ [[file:presen.pdf][PDF Presentaiton]] presen.pdf -- presentation in pdf with similar
-  appearance. Useful when browser-based presentation is not allowed
-+ [[file:resume.pdf][Printable Resume]] resume.pdf -- short and printed version.
-+ =make pdf= and =make resume= on the shell
-+ need the latest $\mbox{\TeX}$ live installation
-  + see =Makefile=
-  + =platex= and =dvipdfmx=
-  + alternatively, =pdflatex=
+でもまだ無駄な重複がある
 
-* Images
+#+BEGIN_CONTAINER-FLUID
+#+BEGIN_ROW-FLUID
+#+BEGIN_SPAN8
+| / | <   |     | >   |         <> |
+|   | <c> | <c> | <c> | <c>        |
+|   | $a$ | $b$ | $c$ | $F(a,b,c)$ |
+|---+-----+-----+-----+------------|
+|   | 0   | 0   | 0   |          0 |
+|   | 0   | 0   | 1   |          0 |
+|   | 0   | 1   | 0   |          0 |
+|   | 0   | 1   | 1   |          1 |
+|   | 1   | 0   | 0   |          0 |
+|   | 1   | 0   | 1   |          1 |
+|   | 1   | 1   | 0   |          0 |
+|   | 1   | 1   | 1   |          1 |
+#+END_SPAN8
+#+BEGIN_SPAN4
+[[png:dd-tree2]]
+#+END_SPAN4
+#+END_ROW-FLUID
+#+END_CONTAINER-FLUID
 
-+ Put images into =img/= directory.
-+ svg files are converted into png.
-  + We recommend it because
-    1. In html presentation, the inserted svg images capture the keyboard and mouse event
-       and the presentation sometimes does not work right.
-    2. In resume output and pdf presentation, the =svg= and =svg-inkscape= package is a
-       bit buggy and I personally failed make it work.
-+ svg-png conversion is done by =inkscape=
-  + but you can also use ImageMagick =convert= command.
-  + See =img/Makefile= for more information.
+** Boolean Function を表現してみる (グラフ/Decision Diagram)
 
-* Org-block templates
+重複を共有してグラフにしよう!
 
-We mark the html tag with org-mode blocks such as =#+BEGIN_EXAMPLE=.
-Using [[http://orgmode.org/manual/Easy-Templates.html][block template]] (by modifying =org-structure-template-alist=),
-you can quickly write such blocks i.e.:
+#+BEGIN_CONTAINER-FLUID
+#+BEGIN_ROW-FLUID
+#+BEGIN_SPAN9
+| / | <   |     | >   |         <> |
+|   | <c> | <c> | <c> | <c>        |
+|   | $a$ | $b$ | $c$ | $F(a,b,c)$ |
+|---+-----+-----+-----+------------|
+|   | 0   | 0   | 0   |          0 |
+|   | 0   | 0   | 1   |          0 |
+|   | 0   | 1   | 0   |          0 |
+|   | 0   | 1   | 1   |          1 |
+|   | 1   | 0   | 0   |          0 |
+|   | 1   | 0   | 1   |          1 |
+|   | 1   | 1   | 0   |          0 |
+|   | 1   | 1   | 1   |          1 |
+#+END_SPAN9
+#+BEGIN_SPAN3
+[[spng:dd-dd]]
+#+END_SPAN3
+#+END_ROW-FLUID
+#+END_CONTAINER-FLUID
 
-#+BEGIN_EXAMPLE
-at the beginning of line, hit
-
-<s<tab>
-
-in normal org-mode destribution in emacs,
-it would expand into:
+** Decision Diagram 定義
 
 #+BEGIN_SRC 
-
+node :: (index, then, else)
 #+END_SRC
-#+END_EXAMPLE
 
-** customizing templates
+then 枝: index 番目のboolean引数がtrue の時にたどる枝 (1-枝, true枝)
 
-We provide custom =org-structure-template-alist=.
-These blocks are recognized by the stylesheet we provide,
-so they are highlighted correctly.
+else 枝: index 番目のboolean引数がfalse の時にたどる枝 (0-枝, false枝)
+
+ハッシュテーブルでノードを管理
+
+→同じindex と 子ノード を持つノードは1つしか存在しない (キャッシュされる)
+
+かつ、グラフ上で常にindexが降順で現れる (Ordered DD)
+
+** 関数同士の演算を高速に行える
 
 #+BEGIN_CONTAINER-FLUID
 #+BEGIN_ROW-FLUID
 #+BEGIN_SPAN6
-+ <S -- smaller
-+ <lar -- larger
-+ <t -- twocolumn
-+ <n -- footnote
-+ <r -- float right
-+ <ar -- align right
-+ <lcr -- "left,center,right" format with x-large fonts
-+ <E -- latex `equation' environment
-+ still more...
++ 関数同士の演算(代数系)
++ BDD: $\neg f, f\land g, f\lor g$
++ ZDD: $f \setminus g, f\cap g, f\cup g$
++ ADD: $-f, f\oplus g, f\otimes g, \max (f,g)$
++ コンパクトなまま効率的に計算できる
 #+END_SPAN6
 #+BEGIN_SPAN6
-copy-paste it
-to your =.emacs=
-
-#+BEGIN_CENTER
-[[file:config.el]]
-#+END_CENTER
-
+[[spng:dd-operation]]
 #+END_SPAN6
 #+END_ROW-FLUID
 #+END_CONTAINER-FLUID
 
-* Utility
+** 縮約規則
 
-+ ./make-periotically.sh [args]
-  + Watches the changes in the directory and =make=
-  + Build statuses are notified in inotify pop-up
-  + all arguments are passed to =make=
-  + dependency : inotifywait, notify-send
+ DD に縮約規則をつけることでさらにコンパクトに出来る
 
-* Makefile Targets
+ 1-枝と0-枝が同じノード を削除 ← 出力に影響を与えない *無駄なノード* だから
 
-+ =make html= -- builds the html version
-+ =make resume= -- builds the resume version
-+ =make pdf= -- builds the pdf version
-+ =make= -- build all
+ #+BEGIN_CONTAINER-FLUID
+ #+BEGIN_ROW-FLUID
+ #+BEGIN_SPAN2
 
-* Test
+ #+END_SPAN2
+ #+BEGIN_SPAN8
+ [[png:bdd-reduction]]
+ #+END_SPAN8
+ #+BEGIN_SPAN2
 
-+ [[http://www.google.com][Link]]
-+ This
-+ Is
-+ A Test
+ #+END_SPAN2
+ #+END_ROW-FLUID
+ #+END_CONTAINER-FLUID
 
-Mathjax formula:
+ 正式には *Ordered BDD (OBDD) == DD + 縮約規則 + 変数順序*
+
+ Ordered でないBDDを使うことはまれなので, BDDといえば普通OBDD
+
+** BDD 同士の演算: Apply
+
+2つのBoolean関数fとgの論理和/論理積などをとることができる
+
+$(f\, R\, g)(x) = f(x)\, R\, g(x),\, x = (x_0,x_1,\ldots)$ のとき ($R=\land,\lor,\ldots$)、
 
 \[
- E=mc^2
+f\, R\, g = \text{BDD}(i,\quad f_{x_i=1}\, R\, g_{x_i=1},\quad f_{x_i=0}\, R\, g_{x_i=0})
 \]
 
-\begin{equation}
- E=mc^2 + \frac{1}{2} mv^2
-\end{equation}
+ただし $i$ は $f,g$ のルートノードのindex
 
-** Twocolumn Test
+$f\, R\, g = \text{Apply}(f,g,R)$ と書くと、 Apply は再帰的に定義可能。
 
-#+BEGIN_CONTAINER-FLUID
-#+BEGIN_ROW-FLUID
-#+BEGIN_SPAN6
-+ HOOA!
-+ *HOOA!*
-+ HOOA!
-#+END_SPAN6
-#+BEGIN_SPAN6
-This is a LISP ALIEN IN A CAGE!
+#+BEGIN_SRC lisp
+(defun apply (f g op)
+  (match* (f g)
+    (((bdd index1     then1 else1)
+      (bdd (= index1) then2 else2))
+     (make-bdd :index index1
+               :then (apply then1 then2 op)
+               :else (apply else1 else2 op)))
+    ...(indexが違う場合など)...
+    ...(leaf node の場合など)...            ))
+#+END_SRC
 
-[[png:alien]]
+** 規約OBDD                                                        :noexport:
 
-#+END_SPAN6
-#+END_ROW-FLUID
-#+END_CONTAINER-FLUID
+** 一意性                                                          :noexport:
 
-
-** many columns test
+** 用途: 自動定理証明、回路の検証、自動プログラム検証 (Formal Methods, Verification)
 
 
 #+BEGIN_CONTAINER-FLUID
 #+BEGIN_ROW-FLUID
-#+BEGIN_SPAN3
- a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a
-#+END_SPAN3
-#+BEGIN_SPAN3
- b b b b b b b b b b b b b b b b b b b b b b b b b b b b b b b b
-#+END_SPAN3
-#+BEGIN_SPAN3
- c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c
-#+END_SPAN3
-#+BEGIN_SPAN3
- d d d d d d d d d d d d d d d d d d d d d d d d d d d d d d d d
-#+END_SPAN3
+#+BEGIN_SPAN6
+指数的に多い要素を「並列に」操作できる
+
+→ *全ケースを余すこと無く検査できる*
+
+注: ここでいう「並列」は、「多数の要素をまとめて処理」ぐらいの意味
+
+並列計算機を走らせることとは関連は無い (が、その意味の並列化も可能)
+#+END_SPAN6
+#+BEGIN_SPAN6
+[[spng:circuit]]
+#+END_SPAN6
 #+END_ROW-FLUID
 #+END_CONTAINER-FLUID
 
-* A Slide with Too Little Contents
+* BDDの問題点
 
-#+BEGIN_CENTER
-#+BEGIN_SMALLER
-Hi, I'm small!
-#+END_SMALLER
-#+END_CENTER
+BDD は論理関数を表現するのには良いが、ある種類の関数が得意でない
 
-#+BEGIN_NOTE
-See the headline is correctly adjusted
-#+END_NOTE
+*集合族*: $F=\{\{a,b\}, \{a,c\}, \{c\}\}$ --- をBDDで表してみる
 
-* Left-Center-Right template
+関数 $f(x_0,x_1,x_2)$ :
 
-#+BEGIN_XLARGE
-x-large left
-#+BEGIN_CENTER
-centered
-#+END_CENTER
+例: $S=\{a,b\}$ は Fに含まれているか?
+
+集合 $S$ が 集合族$F$ に含まれれば $f=1$, 含まれなければ $f=0$
+
+引数 $x_0,x_1,x_2$: 各要素 $a,b,c$ が $S$ に入力に含まれていれば1,含まれていなければ0.
+
+$f(1,1,0) = 1$, 従って $S \in F$
+
+** 実際にやってみると...
+
+左は *いまいち小さくならない* 。
+
 #+BEGIN_ALIGNRIGHT
-right
++ → これを改良したのが右の *ZDD*
 #+END_ALIGNRIGHT
-#+END_XLARGE
 
-#+BEGIN_NOTE
-This is a footnote
-#+END_NOTE
+[[spng:bdd-zdd]]
 
-* TODOs
+
+** 別の縮約規則: Zero-suppressed Decision Diagram (ZDD)
 
 #+BEGIN_CONTAINER-FLUID
 #+BEGIN_ROW-FLUID
 #+BEGIN_SPAN6
-#+BEGIN_SMALLER
-+ Features
-  + Table of contents
-  + +=<dl>= does not expand+ *DONE*
-  + +Showing current keystrokes+ *DONE*
-  + auto-scroll/auto-zoom with big contents
-  + Showing current/total page number
-  + +Changing Stylesheet+ *DONE*. "style"
-  + +Up-Section command+ *DONE*. "u"
-  + Slide thumbnail
-  + +stopwatch/countdown timer+ *DONE*. "timer"
-  + +link to #section+ *DONE*.
-    #+HTML: <a href="index.html#6">sample link</a>
-#+END_SMALLER
+#+BEGIN_CENTER
+BDD: 同じなら削除
+#+END_CENTER
+[[spng:reduction-rule-bdd]]
 #+END_SPAN6
 #+BEGIN_SPAN6
-#+BEGIN_SMALLER
-+ Features inspired by other tools
-  + Content Search (in org-infojs)
-  + Drawing mode (in [[http://code.google.com/p/jessyink/][jessyink]])
-  + 'Paused' mode (in [[http://lab.hakim.se/reveal-js/][reveal.js]])
-  + +Export to PDF (also in reveal.js)+ *DONE*
-  + +resume output+ *DONE*
-  + Slide with an image covering the entire background (slideshare)
-  + present one paragraph/word/letter at a time
-    + those in [[http://docutils.sourceforge.net/docs/user/slide-shows.s5.html][s5]]
-  + "C-M-x" style notation in the command definition
-#+END_SMALLER
+#+BEGIN_CENTER
+ZDD: 1-枝が0なら削除
+#+END_CENTER
+[[spng:reduction-rule-zdd]]
 #+END_SPAN6
-
 #+END_ROW-FLUID
 #+END_CONTAINER-FLUID
+
+** 同じ関数でもzddのほうが小さいのは...
+
+[[spng:bdd-zdd2]]
+
++ 理由: *殆どの場合で関数の値が0* だから
++ → 0と1の割合が同じぐらいの時はbdd, *0が多い場合にはzddが良い*
+
+* ZDD は使える
+
+0が多い場合にはzddが良い
+
++ *最悪指数時間の問題を動的計画法で解く場合…*
+  + *空間全体* のうち *使う空間* はほんの少しなので…
+  + 保持すべきデータをzddに貯めれば 殆ど0
+  + *BDD より ZDD が速いはず!*
+  + 指数的に速いアルゴリズムを書くのに役立つハズ ≠ 定数倍の高速化
+
+** 例えば... (ERATOのスライドを借用)
+
+[[spng:graph]]
+
+#+BEGIN_NOTE
+ZDD とフロンティア法 2017年版 ver 0.1 奈良先端科学技術大学院大学 川原 純
+#+END_NOTE
+
+** 例えば... (ERATOのスライドを借用)
+
+[[spng:graph2]]
+
+#+BEGIN_NOTE
+ZDD とフロンティア法 2017年版 ver 0.1 奈良先端科学技術大学院大学 川原 純
+#+END_NOTE
+
+** 例えば... (ERATOのスライドを借用)
+
+[[spng:graph3]]
+
+#+BEGIN_NOTE
+ZDD とフロンティア法 2017年版 ver 0.1 奈良先端科学技術大学院大学 川原 純
+#+END_NOTE
+
+** 例えば... (ERATOのスライドを借用)
+
+[[spng:graph4]]
+
+#+BEGIN_NOTE
+ZDD とフロンティア法 2017年版 ver 0.1 奈良先端科学技術大学院大学 川原 純
+#+END_NOTE
+
+** ZDDとBDDでは扱うApply操作が違う
+
+BDD: 論理操作 --- $\neg f, f\land g, f\lor g$
+
+ZDD: 集合操作 --- $f \setminus g, f\cap g, f\cup g$
+
+互換性はそこまでではない アルゴリズムも別に作らないといけない
+
+* 本題: BDD/ZDDをLispから使うためのライブラリ
+
+BDD は沢山のライブラリがある
+
+#+BEGIN_CONTAINER-FLUID
+#+BEGIN_ROW-FLUID
+#+BEGIN_SPAN3
+[[spng:bddlib1]]
+#+END_SPAN3
+#+BEGIN_SPAN3
+[[spng:bddlib2]]
+#+END_SPAN3
+#+BEGIN_SPAN3
+[[spng:bddlib3]]
+#+END_SPAN3
+#+BEGIN_SPAN3
+[[spng:bddlib4]]
+#+END_SPAN3
+#+END_ROW-FLUID
+#+END_CONTAINER-FLUID
+
+** そのうち、ZDD に対応するのはあまり多くない
+
++ CUDD: 大御所, Cのライブラリ
++ SapporoBDD, TdZdd (Graphillionの内部): ERATO が作ったC/Pythonライブラリ, 
++ ほか数件だけ, つまりZDDはあまりまだ注目されていない
+
++ CUDD へのCFFIバインディング: CL-CUDD が存在
+
++ → zdd対応なし, CLOS(遅い), Quicklisp登録なし, テスト無し, Tutorial無し、
+  CUDDを自分でビルドしてインストールする必要あり, 最新版のCUDDに対応せず。
+
++ 自分がやったこと: ココらへんを整備して、 *これで何かを作れることを実証する* こと。
+
+* Mate-ZDD
+
+おねえさんのパス数え上げ問題を解くためのアルゴリズム
+
+Don Knuth の Simpath アルゴリズムをピュアZDDで書き直した、シンプルだが遅いバージョン
+
+これをCL-CUDDを使って実装した
+
+https://github.com/guicho271828/simpath
+
+デモ
+
+#+BEGIN_NOTE
+川原 et al. 数理解析研究所講究録 第 1744 巻 2011 年 35-41 ZDD によるパスの列挙
+#+END_NOTE
+
+* Future Work
+
+自分の専門である 自動行動計画ソルバ(プランナ)をZDDで作る
+
++ 配列ベースの普通の手法に比べた利点:
+  + よりスケールする(大きな問題が解ける)
+    + メモリ使用量が削減できる
+    + 探索の情報を圧縮して保持できるから
+  + *細かなループの中のチューニングを気にしなくて良い*
+    + ZDDが複数の状態をまとめて処理するから
+
+** BDDベースのプランニングアルゴリズムは存在する:
+
+[[spng:bdd-astar]]
+
+BDDよりZDDのほうがよいハズ
+
+← 指数爆発している全空間に比べ、実際に使われる空間サイズは小さいから
+
+** International Planning Competition 2014 で優勝
+
+[[spng:bdd-astar-ipc]]
+
+** 強い
+
+[[spng:bdd-paper1]]
+
+[[spng:bdd-paper2]]
+
+# #+BEGIN_CONTAINER-FLUID
+# #+BEGIN_ROW-FLUID
+# #+BEGIN_SPAN8
+# 
+# 
+# #+END_SPAN6
+# #+BEGIN_SPAN6
+# 
+# [[spng:bdd-astar]]
+# 
+# #+END_SPAN6
+# #+END_ROW-FLUID
+# #+END_CONTAINER-FLUID
+
+#+BEGIN_ALIGNRIGHT
+コレに勝つ!
+#+END_ALIGNRIGHT
+
+* まとめ
+
+BDD, ZDD を概説
+
+CL-CUDD をまともに使える状態にした
+
+ZDDでお姉さん問題を解くソルバを作った
+
+プランニングに応用したい
